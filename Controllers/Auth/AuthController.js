@@ -11,8 +11,10 @@ const prisma = new PrismaClient();
 // @method POST
 // @access public
 // ==================================
-module.exports.register = asyncHandler(async (req, res) => {
-  const { name, email, password, role } = req.body;
+module.exports.registerUser = asyncHandler(async (req, res) => {
+  const { name, email, password } = req.body;
+
+  
 
   const existingUser = await prisma.user.findUnique({
     where: { email },
@@ -26,10 +28,13 @@ module.exports.register = asyncHandler(async (req, res) => {
 
   let imagePath;
   if (req.file) {
-    imagePath = `/assets/${req.file.filename}`;
+    imagePath = `/uploads/${req.file.filename}`;
   } else {
     imagePath = "/assets/avatar.jpg";  
   }
+
+  console.log('Uploaded filename:', req.file.filename);
+
 
   const user = await prisma.user.create({
     data: {
@@ -37,7 +42,7 @@ module.exports.register = asyncHandler(async (req, res) => {
       email,
       password: hashedPassword,
       image: imagePath,
-      role,
+      role: "USER",
       block: false,
     },
   });

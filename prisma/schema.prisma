@@ -33,6 +33,7 @@ model Bus {
   currentLng    Float
   destination   Destination @relation(fields: [destinationId], references: [id])
   destinationId Int
+  carNumber     Int
   createdAt     DateTime    @default(now()) @map("created_at")
   updatedAt     DateTime    @updatedAt @map("updated_at")
 }

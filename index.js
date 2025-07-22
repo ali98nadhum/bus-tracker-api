@@ -2,6 +2,7 @@ const express  = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const path = require('path');
+const AuthRoutes =  require("./Routes/AuthRoutes");
 
 const app = express();
 
@@ -14,6 +15,8 @@ app.use(cors({
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 
+
+app.use("/api/v1/auth", AuthRoutes);
 
 
 // Run server
