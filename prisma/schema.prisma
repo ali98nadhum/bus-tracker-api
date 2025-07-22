@@ -20,6 +20,7 @@ model User {
   password  String
   location  Location?
   role      Role
+  image     String?
   block     Boolean
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
