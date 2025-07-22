@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const { HashPassword } = require("../../Utils/HashPassword");
+const {generateToken} = require("../../Utils/generateToken");
 
 const prisma = new PrismaClient();
 
@@ -33,9 +34,6 @@ module.exports.registerUser = asyncHandler(async (req, res) => {
     imagePath = "/assets/avatar.jpg";  
   }
 
-  console.log('Uploaded filename:', req.file.filename);
-
-
   const user = await prisma.user.create({
     data: {
       name,
@@ -43,9 +41,31 @@ module.exports.registerUser = asyncHandler(async (req, res) => {
       password: hashedPassword,
       image: imagePath,
       role: "USER",
-      block: false,
+      isApproved: true,
     },
   });
 
   res.status(201).json({ message: "User registered successfully" });
+});
+
+
+
+// ==================================
+// @desc Login
+// @route /api/v1/auth/login
+// @method POST
+// @access public
+// ==================================
+module.exports.login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    return res.status(400).json({ message: "Invalid email or password" });
+  }
+
+  // Generate a JWT token 
+  const token = generateToken(user.id, user.name, user.role);
+
+  res.status(200).json({ message: "login success", token: token });
 });
