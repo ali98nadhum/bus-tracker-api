@@ -20,38 +20,36 @@ enum Status {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  name       String
-  email      String    @unique
-  password   String
-  location   Location?
-  role       Role
-  image      String?
-  block      Boolean   @default(false)
-  documents  Document?
-  isApproved Boolean   @default(false)
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @updatedAt @map("updated_at")
-}
-
-model Document {
-  id         Int    @id @default(autoincrement())
-  user       User   @relation(fields: [userId], references: [id])
-  userId     Int    @unique
-  licenseUrl String
-  status     Status @default(pending)
+  id           Int           @id @default(autoincrement())
+  name         String
+  email        String        @unique
+  password     String
+  userLocation UserLocation?
+  role         Role          @default(USER)
+  image        String?
+  block        Boolean       @default(false)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
 }
 
 model Bus {
-  id            Int         @id @default(autoincrement())
+  id            Int          @id @default(autoincrement())
   driverName    String
-  currentLat    Float
-  currentLng    Float
-  destination   Destination @relation(fields: [destinationId], references: [id])
+  phone         String
+  password      String
+  busLocation   BusLocation?
+  draverImage   String?
+  licensephoto  String?
+  role          Role         @default(DRIVER)
+  block         Boolean      @default(false)
+  status        Status       @default(pending)
+  currentLat    Float?
+  currentLng    Float?
+  destination   Destination  @relation(fields: [destinationId], references: [id])
   destinationId Int
   carNumber     Int
-  createdAt     DateTime    @default(now()) @map("created_at")
-  updatedAt     DateTime    @updatedAt @map("updated_at")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
 }
 
 model Destination {
@@ -62,12 +60,22 @@ model Destination {
   updatedAt DateTime @updatedAt @map("updated_at")
 }
 
-model Location {
+model UserLocation {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    Int      @unique
   lat       Float
   lng       Float
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BusLocation {
+  id        Int      @id @default(autoincrement())
+  bus       Bus      @relation(fields: [busId], references: [id])
+  busId     Int      @unique
+  lat       Float
+  lng       Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

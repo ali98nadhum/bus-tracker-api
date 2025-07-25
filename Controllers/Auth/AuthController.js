@@ -3,7 +3,6 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const { HashPassword } = require("../../Utils/HashPassword");
 const {generateToken} = require("../../Utils/generateToken");
-const { registerValidator } = require("../../Utils/validators/UserRegistervalidator");
 
 const prisma = new PrismaClient();
 
@@ -42,8 +41,6 @@ module.exports.registerUser = asyncHandler(async (req, res) => {
       email,
       password: hashedPassword,
       image: imagePath,
-      role: "USER",
-      isApproved: true,
     },
   });
 
