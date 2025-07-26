@@ -1,12 +1,31 @@
 const { PrismaClient } = require("@prisma/client");
 const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcryptjs");
-const { HashPassword } = require("../../Utils/HashPassword");
-const {generateToken} = require("../../Utils/generateToken");
-
 const prisma = new PrismaClient();
 
 
+
+// ==================================
+// @desc Get All Destination
+// @route /api/v1/admin/Destination
+// @method GET
+// @access private ( only admin )
+// ==================================
+module.exports.getAllDestination = asyncHandler(async (req, res) => {
+  const { name } = req.query;
+
+  const destination = await prisma.destination.findMany({
+    where: name
+      ? {
+          name: {
+            contains: name,
+            mode: "insensitive",
+          },
+        }
+      : undefined,
+  });
+
+  return res.status(200).json({ data: destination });
+});
 
 
 
@@ -14,7 +33,7 @@ const prisma = new PrismaClient();
 // @desc Create new Destination
 // @route /api/v1/admin/Destination
 // @method POST
-// @access public
+// @access private ( only admin )
 // ==================================
 module.exports.createDestination = asyncHandler(async(req , res) => {
     const {name} = req.body;
