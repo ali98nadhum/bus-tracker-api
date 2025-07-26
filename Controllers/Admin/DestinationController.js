@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 // @desc Get All Destination
 // @route /api/v1/admin/Destination
 // @method GET
-// @access private ( only admin )
+// @access public
 // ==================================
 module.exports.getAllDestination = asyncHandler(async (req, res) => {
   const { name } = req.query;
@@ -26,6 +26,27 @@ module.exports.getAllDestination = asyncHandler(async (req, res) => {
 
   return res.status(200).json({ data: destination });
 });
+
+
+// ==================================
+// @desc Get All Destination
+// @route /api/v1/admin/Destination
+// @method GET
+// @access public
+// ==================================
+module.exports.getDestinationById = asyncHandler(async(req , res) => {
+    const {id} = req.params;
+
+    const destination = await prisma.destination.findUnique({
+        where: {id:parseInt(id)}
+    })
+
+    if(!destination){
+        return res.status(404).json({message:  "لا توجد رحله متوفره لهذا المعرف"})
+    }
+
+    return res.status(200).json({data: destination})
+})
 
 
 
