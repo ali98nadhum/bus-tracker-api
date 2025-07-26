@@ -30,7 +30,7 @@ module.exports.getAllDestination = asyncHandler(async (req, res) => {
 
 // ==================================
 // @desc Get All Destination
-// @route /api/v1/admin/Destination
+// @route /api/v1/admin/Destination/:id
 // @method GET
 // @access public
 // ==================================
@@ -78,11 +78,41 @@ module.exports.createDestination = asyncHandler(async(req , res) => {
 })
 
 
+// ==================================
+// @desc Update Destination
+// @route /api/v1/admin/Destination/:id
+// @method PUT
+// @access private ( only admin )
+// ==================================
+module.exports.updateDestination = asyncHandler(async(req , res) => {
+     const {id} = req.params;
+     const {name} = req.body;
+
+
+     const destination = await prisma.destination.findUnique({
+        where: {id:parseInt(id)}
+    })
+
+    if(!destination){
+        return res.status(404).json({message:  "لا توجد رحله متوفره لهذا المعرف"})
+    }
+
+    const updateDestination = await prisma.destination.update({
+        where: {id: parseInt(id)},
+        data: {
+            name
+        }
+    })
+
+    res.status(200).json({message: "تم تحديث المسار بنجاح " , data: updateDestination})
+})
+
+
 
 
 // ==================================
 // @desc Delete Destination
-// @route /api/v1/admin/Destination
+// @route /api/v1/admin/Destination/:id
 // @method DELETE
 // @access private ( only admin )
 // ==================================

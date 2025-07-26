@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {createDestination, getAllDestination, getDestinationById, deleteDestination} = require("../../Controllers/Admin/DestinationController");
+const {createDestination, getAllDestination, getDestinationById, deleteDestination, updateDestination} = require("../../Controllers/Admin/DestinationController");
 
 router.route("/")
 .post(createDestination)
@@ -8,6 +8,7 @@ router.route("/")
 
 router.route("/:id")
 .get(getDestinationById)
+.put(updateDestination)
 .delete(deleteDestination)
 
 module.exports = router;
