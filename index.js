@@ -20,6 +20,8 @@ app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use("/api/v1/auth", AuthRoutes)
 // Admin Routes
 app.use("/api/v1/admin" , AdminRoutes)
+// Driver Routes
+app.use("/api/v1/driver" , require('./Routes/Driver/BusRoutes'));
 
 
 // Run server

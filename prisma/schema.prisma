@@ -20,16 +20,22 @@ enum Status {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  name         String
-  email        String        @unique
-  password     String
-  userLocation UserLocation?
-  role         Role          @default(USER)
-  image        String?
-  block        Boolean       @default(false)
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @updatedAt @map("updated_at")
+  id                       Int                     @id @default(autoincrement())
+  name                     String
+  email                    String                  @unique
+  password                 String
+  role                     Role                    @default(USER)
+  image                    String?
+  block                    Boolean                 @default(false)
+  isVerifird               Boolean                 @default(false)
+  verificationToken        String
+  verificationTokenExpires DateTime
+  resetPasswordToken       String
+  resetPasswordExpires     String
+  UserLocation             UserLocation?
+  favoriteDestinations     User_fave_destination[]
+  createdAt                DateTime                @default(now()) @map("created_at")
+  updatedAt                DateTime                @updatedAt @map("updated_at")
 }
 
 model Bus {
@@ -37,27 +43,26 @@ model Bus {
   driverName    String
   phone         String
   password      String
-  busLocation   BusLocation?
-  draverImage   String?
+  driverImage   String?
   licensephoto  String?
   role          Role         @default(DRIVER)
   block         Boolean      @default(false)
   status        Status       @default(pending)
-  currentLat    Float?
-  currentLng    Float?
+  carNumber     String       @unique
+  busLocation   BusLocation?
   destination   Destination  @relation(fields: [destinationId], references: [id])
   destinationId Int
-  carNumber     Int
   createdAt     DateTime     @default(now()) @map("created_at")
   updatedAt     DateTime     @updatedAt @map("updated_at")
 }
 
 model Destination {
-  id        Int      @id @default(autoincrement())
-  name      String
-  buses     Bus[]
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id          Int                     @id @default(autoincrement())
+  name        String
+  buses       Bus[]
+  favoritedBy User_fave_destination[]
+  createdAt   DateTime                @default(now()) @map("created_at")
+  updatedAt   DateTime                @updatedAt @map("updated_at")
 }
 
 model UserLocation {
@@ -68,6 +73,18 @@ model UserLocation {
   lng       Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model User_fave_destination {
+  id            Int         @id @default(autoincrement())
+  user          User        @relation(fields: [userId], references: [id])
+  userId        Int
+  destination   Destination @relation(fields: [destinationId], references: [id])
+  destinationId Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([userId, destinationId])
 }
 
 model BusLocation {
