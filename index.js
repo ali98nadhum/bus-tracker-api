@@ -2,8 +2,7 @@ const express  = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const path = require('path');
-const AuthRoutes =  require("./Routes/Auth/AuthRoutes");
-const AdminRoutes = require("./Routes/Admin/AllRoutes");
+
 
 const app = express();
 
@@ -16,12 +15,8 @@ app.use(cors({
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 
-
-app.use("/api/v1/auth", AuthRoutes)
-// Admin Routes
-app.use("/api/v1/admin" , AdminRoutes)
-// Driver Routes
-app.use("/api/v1/driver" , require('./Routes/Driver/BusRoutes'));
+// User Routes
+app.use("/api/v1/auth" , require("./Routes/User/AuthRoutes"));
 
 
 // Run server

@@ -28,10 +28,10 @@ model User {
   image                    String?
   block                    Boolean                 @default(false)
   isVerifird               Boolean                 @default(false)
-  verificationToken        String
-  verificationTokenExpires DateTime
-  resetPasswordToken       String
-  resetPasswordExpires     String
+  verificationToken        String?
+  verificationTokenExpires DateTime?
+  resetPasswordToken       String?
+  resetPasswordExpires     String?
   UserLocation             UserLocation?
   favoriteDestinations     User_fave_destination[]
   createdAt                DateTime                @default(now()) @map("created_at")
