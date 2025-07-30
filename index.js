@@ -17,6 +17,8 @@ app.use("/assets", express.static(path.join(__dirname, "assets")));
 
 // User Routes
 app.use("/api/v1/auth" , require("./Routes/User/AuthRoutes"));
+// Driver Routes
+app.use("/api/v1/driver/auth" , require("./Routes/Driver/AuthRoutes"));
 
 
 // Run server
