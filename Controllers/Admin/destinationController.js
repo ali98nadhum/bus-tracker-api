@@ -3,6 +3,30 @@ const asyncHandler = require("express-async-handler");
 const prisma = new PrismaClient();
 
 
+// ==================================
+// @desc Get All Destination
+// @route /api/v1/admin/destination
+// @method POST
+// @access private ( only admin )
+// ==================================
+module.exports.getAllDestination = asyncHandler(async (req, res) => {
+  const { search } = req.query;
+
+  const destinations = await prisma.destination.findMany({
+    where: search
+      ? {
+          name: {
+            contains: search,
+            mode: 'insensitive', 
+          },
+        }
+      : {},
+  });
+
+  res.status(200).json({ data: destinations });
+});
+
+
 
 // ==================================
 // @desc Create new Destination
