@@ -27,6 +27,24 @@ module.exports.getAllDestination = asyncHandler(async (req, res) => {
 });
 
 
+// ==================================
+// @desc Get  Destination by id
+// @route /api/v1/admin/destination
+// @method POST
+// @access private ( only admin )
+// ==================================
+module.exports.getOneDestination = asyncHandler(async(req , res) => {
+    const {id} = req.params;
+
+    const destination = await prisma.destination.findUnique({where:parseInt(id)})
+    if(!destination){
+        return res.status(404).json({message:"لا يوحد مسار مرتبط بهذا المعرف"})
+    }
+
+    res.status(200).json({data:destination})
+})
+
+
 
 // ==================================
 // @desc Create new Destination
