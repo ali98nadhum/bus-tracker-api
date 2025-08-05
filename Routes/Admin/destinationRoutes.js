@@ -1,4 +1,4 @@
-const { createDestination, getAllDestination, getOneDestination } = require("../../Controllers/Admin/destinationController");
+const { createDestination, getAllDestination, getOneDestination, deleteDestination } = require("../../Controllers/Admin/destinationController");
 
 const router = require("express").Router();
 
@@ -9,5 +9,6 @@ router.route("/")
 
 router.route("/:id")
 .get(getOneDestination)
+.delete(deleteDestination)
 
 module.exports = router;

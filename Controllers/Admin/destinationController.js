@@ -85,3 +85,31 @@ module.exports.createDestination = asyncHandler(async(req , res) => {
 
     res.status(201).json({message: "تم انشاء المسار بنجاح", destination})
 })
+
+
+
+
+
+// ==================================
+// @desc Delete Destination
+// @route /api/v1/admin/destination/:id
+// @method POST
+// @access private ( only admin )
+// ==================================
+module.exports.deleteDestination = asyncHandler(async(req , res) => {
+  const {id} = req.params;
+
+  const destination = await prisma.destination.findUnique({
+    where: {id: parseInt(id)}
+  })
+
+  if(!destination){
+    return res.status(404).json({message: "لا يوجد مسار بهذا المعرف"})
+  }
+
+  await prisma.destination.delete({
+    where: {id:parseInt(id)}
+  })
+
+  res.status(200).json({message: "تم حذف المسار بنجاح"})
+})
