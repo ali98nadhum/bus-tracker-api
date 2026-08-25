@@ -2,6 +2,9 @@ const express  = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const path = require('path');
+const http = require('http');
+const { Server } = require("socket.io");
+const socketHandler = require('./Sockets/socketHandler');
 
 
 const app = express();
@@ -19,10 +22,21 @@ app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use("/api/v1/auth" , require("./Routes/User/AuthRoutes"));
 // Driver Routes
 app.use("/api/v1/driver/auth" , require("./Routes/Driver/AuthRoutes"));
+app.use("/api/v1/driver/trip" , require("./Routes/Driver/TripRoutes"));
 // Admin Routes
 app.use("/api/v1/admin/destination" , require("./Routes/Admin/destinationRoutes"))
 
 
 // Run server
 const port = process.env.PORT || 3000;
-app.listen(port , () => console.log(`Server is run on port ${port}`));
+const server = http.createServer(app);
+
+// Setup Socket.io
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+    }
+});
+socketHandler(io);
+
+server.listen(port , () => console.log(`Server is run on port ${port}`));

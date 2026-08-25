@@ -40,11 +40,6 @@ module.exports.registerDriver = asyncHandler(async (req, res) => {
       driverImage: driverImagePath,
       licensephoto: licensePhotoPath,
       carNumber: req.body.carNumber,
-      destination: {
-        connect: {
-          id: parseInt(req.body.destinationId),
-        },
-      },
     },
   });
 

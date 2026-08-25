@@ -32,7 +32,7 @@ model User {
   verificationTokenExpires DateTime?
   resetPasswordToken       String?
   resetPasswordExpires     String?
-  UserLocation             UserLocation?
+
   favoriteDestinations     User_fave_destination[]
   createdAt                DateTime                @default(now()) @map("created_at")
   updatedAt                DateTime                @updatedAt @map("updated_at")
@@ -50,8 +50,9 @@ model Bus {
   status        Status       @default(pending)
   carNumber     String       @unique
   busLocation   BusLocation?
-  destination   Destination  @relation(fields: [destinationId], references: [id])
-  destinationId Int
+  isOnline      Boolean      @default(false)
+  destination   Destination? @relation(fields: [destinationId], references: [id])
+  destinationId Int?
   createdAt     DateTime     @default(now()) @map("created_at")
   updatedAt     DateTime     @updatedAt @map("updated_at")
 }
@@ -65,15 +66,6 @@ model Destination {
   updatedAt   DateTime                @updatedAt @map("updated_at")
 }
 
-model UserLocation {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int      @unique
-  lat       Float
-  lng       Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
 
 model User_fave_destination {
   id            Int         @id @default(autoincrement())
