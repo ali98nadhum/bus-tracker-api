@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const jwt = require("jsonwebtoken");
 
 // Haversine formula to calculate distance in km
 function getDistance(lat1, lon1, lat2, lon2) {
@@ -15,13 +16,31 @@ function getDistance(lat1, lon1, lat2, lon2) {
 }
 
 module.exports = (io) => {
+    // Socket Authentication Middleware
+    io.use((socket, next) => {
+        const token = socket.handshake.auth.token || socket.handshake.headers.authorization?.split(" ")[1];
+        if (!token) {
+            return next(new Error("Authentication error: No token provided"));
+        }
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            socket.user = decoded;
+            next();
+        } catch (err) {
+            next(new Error("Authentication error: Invalid token"));
+        }
+    });
+
     io.on('connection', (socket) => {
-        console.log('A user connected:', socket.id);
+        console.log('A user connected:', socket.id, 'Role:', socket.user.role);
 
         // Driver updates their location
         socket.on('driver:updateLocation', async (data) => {
+            if (socket.user.role !== 'DRIVER') return;
+
             try {
-                const { busId, lat, lng } = data;
+                const busId = socket.user.id;
+                const { lat, lng } = data;
                 
                 // Verify the bus exists and is online/approved
                 const bus = await prisma.bus.findUnique({

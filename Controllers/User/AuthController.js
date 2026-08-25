@@ -131,3 +131,82 @@ module.exports.login = asyncHandler(async (req, res) => {
 
   res.status(200).json({ message: "login success", token: token });
 });
+
+// ==================================
+// @desc Forgot Password
+// @route /api/v1/auth/forgot-password
+// @method POST
+// @access public
+// ==================================
+module.exports.forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+        return res.status(404).json({ message: "لا يوجد حساب بهذا الإيميل" });
+    }
+
+    const resetToken = randomBytes(32).toString("hex");
+    const resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 mins
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            resetPasswordToken: resetToken,
+            resetPasswordExpires: resetPasswordExpires
+        }
+    });
+
+    const link = `${process.env.DOMAIN}/reset-password/${resetToken}`;
+
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: "استعادة كلمة المرور",
+            message: `<h1>استعادة كلمة المرور</h1>
+                      <p>لقد طلبت استعادة كلمة المرور. اضغط على الرابط التالي (صالح لمدة 15 دقيقة):</p>
+                      <a href="${link}">استعادة كلمة المرور</a>`
+        });
+        res.status(200).json({ message: "تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني" });
+    } catch (error) {
+        res.status(500).json({ message: "حدث خطأ أثناء إرسال البريد" });
+    }
+});
+
+// ==================================
+// @desc Reset Password
+// @route /api/v1/auth/reset-password/:token
+// @method POST
+// @access public
+// ==================================
+module.exports.resetPassword = asyncHandler(async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    const user = await prisma.user.findFirst({
+        where: {
+            resetPasswordToken: token
+        }
+    });
+
+    if (!user || !user.resetPasswordExpires) {
+        return res.status(400).json({ message: "الرابط غير صالح" });
+    }
+
+    if (new Date(user.resetPasswordExpires) < new Date()) {
+        return res.status(400).json({ message: "انتهت صلاحية الرابط" });
+    }
+
+    const hashedPassword = await HashPassword(password);
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            password: hashedPassword,
+            resetPasswordToken: null,
+            resetPasswordExpires: null
+        }
+    });
+
+    res.status(200).json({ message: "تم تغيير كلمة المرور بنجاح" });
+});
