@@ -9,10 +9,11 @@ const prisma = new PrismaClient();
 // @access public (assuming busId is passed in body for MVP)
 // ==================================
 module.exports.startTrip = asyncHandler(async (req, res) => {
-    const { busId, destinationId } = req.body;
+    const busId = req.user.id;
+    const { destinationId } = req.body;
 
-    if (!busId || !destinationId) {
-        return res.status(400).json({ message: "busId و destinationId مطلوبة" });
+    if (!destinationId) {
+        return res.status(400).json({ message: "destinationId مطلوبة" });
     }
 
     const bus = await prisma.bus.findUnique({
@@ -45,11 +46,7 @@ module.exports.startTrip = asyncHandler(async (req, res) => {
 // @access public
 // ==================================
 module.exports.endTrip = asyncHandler(async (req, res) => {
-    const { busId } = req.body;
-
-    if (!busId) {
-        return res.status(400).json({ message: "busId مطلوب" });
-    }
+    const busId = req.user.id;
 
     const updatedBus = await prisma.bus.update({
         where: { id: parseInt(busId) },

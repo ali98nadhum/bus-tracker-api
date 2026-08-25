@@ -20,11 +20,13 @@ app.use("/assets", express.static(path.join(__dirname, "assets")));
 
 // User Routes
 app.use("/api/v1/auth" , require("./Routes/User/AuthRoutes"));
+app.use("/api/v1/destinations" , require("./Routes/User/DestinationRoutes"));
 // Driver Routes
 app.use("/api/v1/driver/auth" , require("./Routes/Driver/AuthRoutes"));
 app.use("/api/v1/driver/trip" , require("./Routes/Driver/TripRoutes"));
 // Admin Routes
 app.use("/api/v1/admin/destination" , require("./Routes/Admin/destinationRoutes"))
+app.use("/api/v1/admin/drivers" , require("./Routes/Admin/DriverRoutes"))
 
 
 // Run server

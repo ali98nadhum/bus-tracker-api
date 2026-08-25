@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { registerDriver } = require("../../Controllers/Driver/AuthDriver");
+const { registerDriver, loginDriver } = require("../../Controllers/Driver/AuthDriver");
 const uploadImage = require("../../middlewares/uploadImage");
 
 
@@ -11,5 +11,7 @@ router.route("/register").post(
   ]),
   registerDriver
 );
+
+router.post("/login", loginDriver);
 
 module.exports = router;
